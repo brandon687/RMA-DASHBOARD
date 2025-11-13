@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env.local
 uploads/
 *.log
 .DS_Store
@@ -9,3 +10,12 @@ uploads/
 .idea/
 dist/
 build/
+google-credentials.json
+tmp/
+
+# Replit specific
+.replit
+.config/
+.cache/
+replit.nix
+.breakpoints

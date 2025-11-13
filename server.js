@@ -7,22 +7,93 @@ const path = require('path');
 const fs = require('fs').promises;
 const XLSX = require('xlsx');
 const pdfParse = require('pdf-parse');
+const rateLimit = require('express-rate-limit');
 const googleSheetsService = require('./google-sheets-service');
 const db = require('./services/supabase-client');
 const ExcelIMEIExtractor = require('./services/excel-imei-extractor-v2');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_PRODUCTION = NODE_ENV === 'production';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Security headers middleware
+app.use((req, res, next) => {
+    // Security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+    // Content Security Policy
+    res.setHeader('Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "img-src 'self' data:; " +
+        "connect-src 'self';"
+    );
+
+    next();
+});
+
+// Rate limiting for API endpoints
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const submissionLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10, // Limit each IP to 10 submissions per hour
+    message: 'Too many submission attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply rate limiting to API routes
+app.use('/api/', apiLimiter);
+
+// CORS configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:3000'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, Postman, etc.)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1 || !IS_PRODUCTION) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
+
+// Body parsers with size limits
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// File upload with enhanced security
+const maxFileSize = parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024; // 10MB default
 app.use(fileUpload({
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+    limits: { fileSize: maxFileSize },
     abortOnLimit: true,
     useTempFiles: true,
-    tempFileDir: '/tmp/'
+    tempFileDir: '/tmp/',
+    createParentPath: true,
+    safeFileNames: true,
+    preserveExtension: true,
+    debug: !IS_PRODUCTION
 }));
 
 // Serve static files
@@ -224,16 +295,58 @@ function generateReferenceNumber() {
     return `${prefix}-${timestamp}-${random}`;
 }
 
+// Input validation helper
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    // Remove potentially dangerous characters
+    return input.replace(/[<>\"']/g, '').trim();
+}
+
 // API Endpoints
-app.post('/api/submit-rma', async (req, res) => {
+app.post('/api/submit-rma', submissionLimiter, async (req, res) => {
     try {
-        const { companyName, companyEmail, orderNumber, quantity, customerType } = req.body;
+        let { companyName, companyEmail, orderNumber, quantity, customerType } = req.body;
 
         // Validate required fields
         if (!companyName || !companyEmail || !orderNumber || !quantity || !customerType) {
             return res.status(400).json({
                 error: 'Missing required fields',
                 message: 'Please fill in all required fields'
+            });
+        }
+
+        // Validate email format
+        if (!validateEmail(companyEmail)) {
+            return res.status(400).json({
+                error: 'Invalid email',
+                message: 'Please provide a valid email address'
+            });
+        }
+
+        // Sanitize inputs
+        companyName = sanitizeInput(companyName);
+        orderNumber = sanitizeInput(orderNumber);
+        customerType = sanitizeInput(customerType);
+
+        // Validate quantity
+        const parsedQuantity = parseInt(quantity);
+        if (isNaN(parsedQuantity) || parsedQuantity < 1 || parsedQuantity > 10000) {
+            return res.status(400).json({
+                error: 'Invalid quantity',
+                message: 'Quantity must be between 1 and 10,000'
+            });
+        }
+
+        // Validate customer type
+        if (!['us', 'international'].includes(customerType)) {
+            return res.status(400).json({
+                error: 'Invalid customer type',
+                message: 'Customer type must be either "us" or "international"'
             });
         }
 
