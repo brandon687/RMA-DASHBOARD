@@ -100,8 +100,8 @@ function formatPacificTime(timestamp) {
     const minute = parts.find(p => p.type === 'minute').value;
     const dayPeriod = parts.find(p => p.type === 'dayPeriod').value;
 
-    // Format: MM/DD/YYYY HH:MM AM/PM
-    return `${month}/${day}/${year} ${hour}:${minute} ${dayPeriod}`;
+    // Format: MM/DD/YYYY on first line, HH:MM AM/PM on second line
+    return `<div style="line-height: 1.4;">${month}/${day}/${year}<br>${hour}:${minute} ${dayPeriod}</div>`;
 }
 
 function renderSubmissions() {
@@ -119,12 +119,12 @@ function renderSubmissions() {
     // Add header row
     let html = `
         <div class="submission-item-header">
-            <div>STATUS</div>
-            <div>SUBMITTED ON</div>
             <div>COMPANY NAME</div>
-            <div>CUSTOMER EMAIL</div>
             <div>SALES ORDER NUMBER</div>
             <div>QTY TO RETURN</div>
+            <div>CUSTOMER EMAIL</div>
+            <div>SUBMITTED ON</div>
+            <div>STATUS</div>
             <div></div>
         </div>
     `;
@@ -136,6 +136,21 @@ function renderSubmissions() {
             const status = sub.overall_status?.toLowerCase() || 'pending';
             return `
             <div class="submission-item" onclick="viewSubmission('${sub.reference_number}')">
+                <div style="font-weight: 500;">
+                    ${sub.company_name}
+                </div>
+                <div style="font-weight: 500;">
+                    ${sub.order_number || 'N/A'}
+                </div>
+                <div style="font-weight: 600; text-align: center;">
+                    ${sub.total_devices || 0}
+                </div>
+                <div style="color: #1d1d1f;">
+                    ${sub.company_email}
+                </div>
+                <div style="font-size: 0.85rem; color: #86868b;">
+                    ${formatPacificTime(sub.submission_date || sub.created_at)}
+                </div>
                 <div onclick="event.stopPropagation();">
                     <div class="status-dropdown-wrapper">
                         <button class="status-badge status-${status}" onclick="toggleStatusDropdown('${sub.reference_number}', event)">
@@ -148,21 +163,6 @@ function renderSubmissions() {
                             <div class="status-dropdown-item" onclick="changeStatus('${sub.reference_number}', 'denied', event)">Denied</div>
                         </div>
                     </div>
-                </div>
-                <div style="font-size: 0.85rem; color: #86868b;">
-                    ${formatPacificTime(sub.submission_date || sub.created_at)}
-                </div>
-                <div style="font-weight: 500;">
-                    ${sub.company_name}
-                </div>
-                <div style="color: #1d1d1f;">
-                    ${sub.company_email}
-                </div>
-                <div style="font-weight: 500;">
-                    ${sub.order_number || 'N/A'}
-                </div>
-                <div style="font-weight: 600; text-align: center;">
-                    ${sub.total_devices || 0}
                 </div>
                 <button class="view-btn" onclick="viewSubmission('${sub.reference_number}'); event.stopPropagation();">
                     View
