@@ -1,0 +1,50 @@
+=================================================================
+COPY THESE EXACT LINES INTO RAILWAY VARIABLES (ONE AT A TIME)
+=================================================================
+
+NODE_ENV=production
+PORT=3000
+SUPABASE_URL=https://pzkyojrrrvmxasiigrkb.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6a3lvanJycnZteGFzaWlncmtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5Njc3MTEsImV4cCI6MjA3ODU0MzcxMX0.iaVZVnGXSM4zcGsF1WUVMuRylrE5ks9ANGcvLanONKo
+DATABASE_URL=postgresql://postgres.pzkyojrrrvmxasiigrkb:SCaltest6%25%24%23%24@aws-0-us-west-1.pooler.supabase.com:6543/postgres
+JWT_SECRET=089ca4c6026c08a4dbba295b0ed06a30b8797614b91d5f07794c1c8b4ef29827
+SESSION_SECRET=a8f3c2e9d1b4e6f7a2c8d9e1f3a5b7c9
+ADMIN_EMAIL=admin@scalmob.com
+ENABLE_AUTH=true
+MAX_FILE_SIZE=10485760
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+ALLOWED_ORIGINS=https://scalmob.com,https://tuveinc.com,http://localhost:3000
+DEBUG=false
+LOG_SQL_QUERIES=false
+
+=================================================================
+IMPORTANT: After Railway deploys and you get your domain:
+=================================================================
+
+1. Find your Railway domain in: Settings → Domains
+   (will look like: https://your-app-name.up.railway.app)
+
+2. UPDATE the ALLOWED_ORIGINS variable to include your Railway domain:
+
+ALLOWED_ORIGINS=https://YOUR-RAILWAY-DOMAIN.up.railway.app,https://scalmob.com,https://tuveinc.com
+
+=================================================================
+HOW TO ADD TO RAILWAY:
+=================================================================
+
+1. Go to Railway Dashboard
+2. Click your service
+3. Click "Variables" tab
+4. Click "RAW Editor" button (easier for bulk paste)
+5. Paste ALL lines above at once
+6. Click "Update Variables"
+7. Railway will auto-redeploy
+
+OR add one at a time:
+- Click "+ New Variable"
+- Copy/paste each KEY=VALUE line
+- Railway auto-splits it for you
+- Click "Add"
+
+=================================================================
