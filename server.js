@@ -654,6 +654,59 @@ app.get('/api/admin/download/:referenceNumber/:fileId', async (req, res) => {
     }
 });
 
+// Update submission status endpoint
+app.post('/api/admin/submission/:referenceNumber/status', async (req, res) => {
+    try {
+        const { referenceNumber } = req.params;
+        const { status } = req.body;
+
+        // Validate status
+        const validStatuses = ['submitted', 'pending', 'approved', 'denied'];
+        if (!status || !validStatuses.includes(status.toLowerCase())) {
+            return res.status(400).json({
+                error: 'Invalid status',
+                message: 'Status must be one of: submitted, pending, approved, denied'
+            });
+        }
+
+        // Update status in database
+        const updateQuery = await db.client
+            .from('rma_submissions')
+            .update({
+                overall_status: status.toUpperCase(),
+                updated_at: new Date().toISOString()
+            })
+            .eq('reference_number', referenceNumber)
+            .select()
+            .single();
+
+        if (updateQuery.error) {
+            throw updateQuery.error;
+        }
+
+        if (!updateQuery.data) {
+            return res.status(404).json({
+                error: 'Submission not found',
+                message: `No submission found with reference number: ${referenceNumber}`
+            });
+        }
+
+        console.log(`Status updated: ${referenceNumber} -> ${status.toUpperCase()}`);
+
+        res.json({
+            success: true,
+            message: 'Status updated successfully',
+            submission: updateQuery.data
+        });
+    } catch (error) {
+        console.error('Error updating submission status:', error);
+        res.status(500).json({
+            error: 'Failed to update status',
+            message: error.message
+        });
+    }
+});
+
 // Get all submissions (admin endpoint - should be protected in production)
 app.get('/api/submissions', async (req, res) => {
     try {

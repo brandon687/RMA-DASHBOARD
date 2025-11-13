@@ -142,6 +142,7 @@ function renderSubmissions() {
                             ${status.toUpperCase()}
                         </button>
                         <div class="status-dropdown" id="status-dropdown-${sub.reference_number}">
+                            <div class="status-dropdown-item" onclick="changeStatus('${sub.reference_number}', 'submitted', event)">Submitted</div>
                             <div class="status-dropdown-item" onclick="changeStatus('${sub.reference_number}', 'pending', event)">Pending</div>
                             <div class="status-dropdown-item" onclick="changeStatus('${sub.reference_number}', 'approved', event)">Approved</div>
                             <div class="status-dropdown-item" onclick="changeStatus('${sub.reference_number}', 'denied', event)">Denied</div>
@@ -399,3 +400,75 @@ function getFileExtension(filename) {
     const ext = filename.split('.').pop().toUpperCase();
     return ext.length <= 4 ? ext : 'FILE';
 }
+
+// Status Dropdown Functions
+function toggleStatusDropdown(referenceNumber, event) {
+    event.stopPropagation();
+
+    const dropdown = document.getElementById(`status-dropdown-${referenceNumber}`);
+    const allDropdowns = document.querySelectorAll('.status-dropdown');
+
+    // Close all other dropdowns
+    allDropdowns.forEach(d => {
+        if (d.id !== `status-dropdown-${referenceNumber}`) {
+            d.classList.remove('show');
+        }
+    });
+
+    // Toggle current dropdown
+    dropdown.classList.toggle('show');
+}
+
+async function changeStatus(referenceNumber, newStatus, event) {
+    event.stopPropagation();
+
+    // Close dropdown immediately
+    const dropdown = document.getElementById(`status-dropdown-${referenceNumber}`);
+    dropdown.classList.remove('show');
+
+    try {
+        // Call API to update status
+        const response = await fetch(`/api/admin/submission/${referenceNumber}/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update status');
+        }
+
+        const result = await response.json();
+
+        // Update the UI - find the submission in our array and update it
+        const submission = submissions.find(s => s.reference_number === referenceNumber);
+        if (submission) {
+            submission.overall_status = newStatus.toUpperCase();
+        }
+
+        // Re-render the submissions list to reflect the change
+        applyFilter();
+
+        console.log(`Status updated successfully: ${referenceNumber} -> ${newStatus}`);
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update status. Please try again.');
+
+        // Reload submissions to ensure consistency
+        loadSubmissions();
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (event) => {
+    const isDropdownClick = event.target.closest('.status-dropdown-wrapper');
+
+    if (!isDropdownClick) {
+        const allDropdowns = document.querySelectorAll('.status-dropdown');
+        allDropdowns.forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+    }
+});
