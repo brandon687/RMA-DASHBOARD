@@ -418,18 +418,24 @@
         }
 
         .view-btn {
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: 0.5rem 1rem;
             background: #0071e3;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: var(--font-size-base);
-            transition: background 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 110px;
+            text-align: center;
+            font-family: var(--font-body);
         }
 
         .view-btn:hover {
             background: #0077ed;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
         }
 
         .modal {
