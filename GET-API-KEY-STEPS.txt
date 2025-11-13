@@ -1,0 +1,47 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    HOW TO GET YOUR SUPABASE API KEY                          ║
+╔══════════════════════════════════════════════════════════════════════════════╗
+
+STEP 1: Open Supabase Dashboard
+  → https://supabase.com/dashboard/project/pzkyojrrrvmxasiigrkb/settings/api
+
+STEP 2: Look for "Project API keys" section
+  You'll see a table with two keys:
+  
+  ┌─────────────────────────────────────────────────────────────┐
+  │ Project API keys                                            │
+  ├─────────────────────────────────────────────────────────────┤
+  │                                                             │
+  │ anon public                                                 │
+  │ [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]  📋 Copy       │
+  │ This key is safe to use in a browser                        │
+  │                                                             │
+  │ service_role secret                                         │
+  │ [eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...]  📋 Copy       │
+  │ This key has full access - keep it secret                   │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
+
+STEP 3: Copy the "anon public" key
+  → Click the copy icon next to "anon public"
+  → The key starts with: eyJ...
+  → It's usually ~200+ characters long
+
+STEP 4: Run the setup script
+  → cd "/Users/brandonin/scal rma dashboard"
+  → node setup-supabase-key.js
+  → Paste the key when prompted
+
+STEP 5: Restart your server
+  → The script will tell you if connection works
+  → Restart server: kill $(lsof -ti:3000) && npm start
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT: Use "anon public" key, NOT "service_role" key
+
+The anon key is safe for client-side use and respects Row Level Security.
+The service_role key has full access and should only be used server-side with
+extreme caution.
+
+═══════════════════════════════════════════════════════════════════════════════

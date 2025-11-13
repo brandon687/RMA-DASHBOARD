@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>SCal Mobile Returns Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <div class="landing-container-clean">
+            <div class="logo-container-center">
+                <div class="brand-logo-full">
+                    <!-- Animated S Icon -->
+                    <div class="s-icon-wrapper">
+                        <img src="logo.png" alt="SCal Mobile" class="brand-logo-large">
+                    </div>
+                </div>
+            </div>
+            <button class="continue-btn-minimal" id="continue-btn">Enter Portal</button>
+        </div>
+    </div>
+
+    <!-- Main RMA Portal -->
+    <div id="main-portal" class="page">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-small">SCAL MOBILE</div>
+                <nav class="nav">
+                    <a href="#guidelines" class="nav-link">Guidelines</a>
+                    <a href="mailto:rma@scalmob.com" class="nav-link">Contact</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Customer Type Selection -->
+            <section class="customer-type-section" id="customer-type-section">
+                <div class="container">
+                    <h2 class="section-title">Submit a Return Request</h2>
+                    <p class="section-subtitle">Select your location to begin the RMA submission process</p>
+                    <div class="customer-type-cards">
+                        <div class="type-card" data-type="us">
+                            <div class="type-card-icon">🇺🇸</div>
+                            <h3>US Customers</h3>
+                            <p>Ship returns to our Irvine, CA facility within 10 days of approval</p>
+                            <button class="select-type-btn" data-type="us">Select</button>
+                        </div>
+                        <div class="type-card" data-type="international">
+                            <div class="type-card-icon">🌍</div>
+                            <h3>International Customers</h3>
+                            <p>Receive prepaid shipping labels upon RMA approval</p>
+                            <button class="select-type-btn" data-type="international">Select</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guidelines Display -->
+            <section class="guidelines-section hidden" id="guidelines-section">
+                <div class="container">
+                    <button class="back-btn" id="back-to-selection">← Change Customer Type</button>
+                    <div class="guidelines-content" id="guidelines-content">
+                        <!-- Content will be injected via JavaScript -->
+                    </div>
+                    <button class="proceed-btn" id="proceed-to-form">Proceed to RMA Form</button>
+                </div>
+            </section>
+
+            <!-- RMA Submission Form -->
+            <section class="form-section hidden" id="form-section">
+                <div class="container">
+                    <button class="back-btn" id="back-to-guidelines">← Back to Guidelines</button>
+                    <h2 class="section-title">RMA Submission Form</h2>
+                    <p class="section-subtitle">Please provide accurate information for all required fields to ensure timely processing</p>
+
+                    <form id="rma-form" class="rma-form">
+                        <div class="form-group">
+                            <label for="company-name" class="form-label">Company Name *</label>
+                            <input type="text" id="company-name" name="companyName" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="company-email" class="form-label">Company Email *</label>
+                            <input type="email" id="company-email" name="companyEmail" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="order-number" class="form-label">Sales Order Number *</label>
+                            <input type="text" id="order-number" name="orderNumber" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity" class="form-label">Quantity to Return *</label>
+                            <input type="number" id="quantity" name="quantity" class="form-input" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Supporting Documents *</label>
+                            <p class="form-hint">Include device details, invoices, or condition reports. Accepts CSV, Excel, PDF, images, and all file types. Maximum 10MB per file.</p>
+
+                            <div class="file-upload-container" id="file-upload-container">
+                                <div class="file-upload-area" id="file-upload-area">
+                                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <p class="upload-text">Drag and drop files here</p>
+                                    <p class="upload-subtext">or</p>
+                                    <button type="button" class="browse-btn" id="browse-btn">Browse Files</button>
+                                    <input type="file" id="file-input" name="files" multiple accept="*/*" hidden>
+                                </div>
+
+                                <div class="file-list" id="file-list"></div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="customer-type" name="customerType" value="">
+
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn" id="submit-btn">
+                                <span class="submit-text">Submit RMA Request</span>
+                                <span class="submit-loader hidden"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Success Message -->
+            <section class="success-section hidden" id="success-section">
+                <div class="container">
+                    <div class="success-content">
+                        <div class="success-icon">✓</div>
+                        <h2 class="success-title">Request Submitted Successfully</h2>
+                        <p class="success-message">
+                            Your RMA request has been received. Our team will review and respond within 2 business days with approval or additional information requirements.
+                        </p>
+                        <p class="success-reference">Reference Number: <span id="reference-number"></span></p>
+                        <button class="new-request-btn" id="new-request-btn">Submit Another Request</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guidelines Section -->
+            <section class="info-section" id="guidelines">
+                <div class="container">
+                    <h2 class="section-title">Return Process</h2>
+                    <p class="section-subtitle">Follow our streamlined 5-step process for hassle-free returns</p>
+
+                    <div class="process-timeline">
+                        <div class="process-step">
+                            <div class="step-header">
+                                <div class="step-circle">
+                                    <span class="step-number">01</span>
+                                </div>
+                                <h3 class="step-title">45-Day RMA Submission Window</h3>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+
+                        <div class="process-step">
+                            <div class="step-header">
+                                <div class="step-circle">
+                                    <span class="step-number">02</span>
+                                </div>
+                                <h3 class="step-title">2-Business-Day Review</h3>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+
+                        <div class="process-step">
+                            <div class="step-header">
+                                <div class="step-circle">
+                                    <span class="step-number">03</span>
+                                </div>
+                                <h3 class="step-title">RMA Authorization Required</h3>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+
+                        <div class="process-step">
+                            <div class="step-header">
+                                <div class="step-circle">
+                                    <span class="step-number">04</span>
+                                </div>
+                                <h3 class="step-title">Follow Shipping Instructions & Pack With Care</h3>
+                            </div>
+                            <div class="step-connector"></div>
+                        </div>
+
+                        <div class="process-step">
+                            <div class="step-header">
+                                <div class="step-circle">
+                                    <span class="step-number">05</span>
+                                </div>
+                                <h3 class="step-title">Credit Issued Weekly on Sundays</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>SCal Mobile</h4>
+                        <p>Premium used mobile device solutions</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Contact</h4>
+                        <p>Email: <a href="mailto:rma@scalmob.com">rma@scalmob.com</a></p>
+                        <p>Address: 8583 Irvine Center Dr., #214<br>Irvine, CA 92618</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Company</h4>
+                        <p><a href="https://www.scalmob.com" target="_blank">Main Website</a></p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 SCal Mobile. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

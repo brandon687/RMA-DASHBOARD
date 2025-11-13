@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>RMA Admin Dashboard - SCal Mobile</title>
+    <style>
+        /* Professional Typography - Match Main Portal */
+        @font-face {
+            font-family: 'Gotham';
+            src: url('fonts/Gotham-Book.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gotham';
+            src: url('fonts/Gotham-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gotham';
+            src: url('fonts/Gotham-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            src: url('fonts/Poppins-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            src: url('fonts/Poppins-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            src: url('fonts/Poppins-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            /* Professional Typography Stack */
+            --font-display: 'Gotham', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+            /* Professional Typography Scale */
+            --font-size-base: clamp(17px, 1.1vw, 19px);
+            --font-size-small: clamp(14px, 1vw, 16px);
+            --font-size-large: clamp(19px, 1.3vw, 21px);
+            --font-size-h1: clamp(3rem, 6vw, 5rem);
+            --font-size-h2: clamp(2.125rem, 4.5vw, 3.5rem);
+            --font-size-h3: clamp(1.75rem, 3vw, 2.5rem);
+            --font-size-h4: clamp(1.5rem, 2.25vw, 2rem);
+
+            /* Font Weights */
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+
+            /* Line Heights */
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.5;
+
+            /* Fluid spacing - Apple generous whitespace standard */
+            --spacing-xs: clamp(0.5rem, 0.75vw, 0.75rem);
+            --spacing-sm: clamp(1rem, 1.5vw, 1.5rem);
+            --spacing-md: clamp(1.5rem, 2vw, 2rem);
+            --spacing-lg: clamp(2rem, 3vw, 3rem);
+            --spacing-xl: clamp(3rem, 4.5vw, 4.5rem);
+            --spacing-2xl: clamp(4rem, 6vw, 6rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: var(--line-height-normal);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-regular);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: #000;
+            color: #fff;
+            padding: var(--spacing-md) var(--spacing-lg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .admin-badge {
+            background: #0071e3;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: 20px;
+            font-size: var(--font-size-small);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: var(--spacing-lg) auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: var(--spacing-sm);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            color: #86868b;
+            font-size: var(--font-size-small);
+            margin-bottom: var(--spacing-xs);
+            font-family: var(--font-body);
+        }
+
+        .stat-value {
+            font-size: clamp(1.75rem, 2.25vw, 2rem);
+            font-weight: 600;
+            color: #1d1d1f;
+            font-family: var(--font-display);
+        }
+
+        .submissions-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #d2d2d7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: var(--font-size-h4);
+            font-weight: 600;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border: 1px solid #d2d2d7;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f5f5f7;
+        }
+
+        .filter-btn.active {
+            background: #0071e3;
+            color: #fff;
+            border-color: #0071e3;
+        }
+
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .submission-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #d2d2d7;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: grid;
+            grid-template-columns: 1.5fr 2fr 2fr 1.5fr 1fr 100px;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .submission-item-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #d2d2d7;
+            display: grid;
+            grid-template-columns: 1.5fr 2fr 2fr 1.5fr 1fr 100px;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            color: #86868b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            background: #f5f5f7;
+        }
+
+        .submission-item:hover {
+            background: #f5f5f7;
+        }
+
+        .submission-item:last-child {
+            border-bottom: none;
+        }
+
+        .submission-info h3 {
+            font-size: var(--font-size-large);
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .submission-meta {
+            color: #86868b;
+            font-size: 0.9rem;
+        }
+
+        .submission-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-denied {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .submission-devices {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .submission-time {
+            color: #86868b;
+            font-size: 0.9rem;
+        }
+
+        .view-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: #0071e3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            transition: background 0.2s;
+        }
+
+        .view-btn:hover {
+            background: #0077ed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 95%;
+            width: 95%;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #d2d2d7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #86868b;
+            padding: 0.5rem;
+        }
+
+        .close-btn:hover {
+            color: #1d1d1f;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            font-size: var(--font-size-h4);
+            margin-bottom: var(--spacing-sm);
+            color: #1d1d1f;
+            line-height: 1.2;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: #f5f5f7;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            color: #86868b;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+
+        .detail-grid-two-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .detail-col {
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .detail-col .detail-label {
+            color: #86868b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .detail-col .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card-inline {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid #e5e5e7;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card-inline:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .stat-card-return {
+            border-color: #ff3b30;
+        }
+
+        .stat-card-repair {
+            border-color: #34c759;
+        }
+
+        .stat-card-verified {
+            border-color: #007aff;
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .stat-card-return .stat-card-icon {
+            background: #ffe5e5;
+        }
+
+        .stat-card-repair .stat-card-icon {
+            background: #e5f7e5;
+        }
+
+        .stat-card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .stat-card-body {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        .stat-card-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+
+        .stat-card-return .stat-card-number {
+            color: #ff3b30;
+        }
+
+        .stat-card-repair .stat-card-number {
+            color: #34c759;
+        }
+
+        .stat-card-percentage {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #86868b;
+        }
+
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            background: #fff;
+            border: 1px solid #d2d2d7;
+        }
+
+        .devices-table th {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .devices-table td {
+            padding: 0.75rem;
+            border: 1px solid #d2d2d7;
+            vertical-align: top;
+            background: #fff;
+        }
+
+        .devices-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .devices-table tbody tr:nth-child(even) td {
+            background: #fafbfc;
+        }
+
+        .devices-table tbody tr:nth-child(even):hover td {
+            background: #f8f9fa;
+        }
+
+        .imei-badge {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background: #e8f4fd;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .validation-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .validation-valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .validation-invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .files-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f5f5f7;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: #0071e3;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            padding: 0.5rem 1rem;
+            background: #0071e3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .download-btn:hover {
+            background: #0077ed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #86868b;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0071e3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+            }
+            body {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .container {
+                max-width: 960px;
+                padding: 0 var(--spacing-md);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+            .container {
+                padding: 0 var(--spacing-sm);
+                margin: var(--spacing-md) auto;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            .submission-item {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            .submission-item-header {
+                display: none;
+            }
+            .filter-buttons {
+                width: 100%;
+            }
+            .filter-btn {
+                flex: 1;
+                text-align: center;
+            }
+            .modal-content {
+                max-width: 100%;
+                width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .detail-row {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.1rem;
+            }
+            .admin-badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+            }
+            .devices-table {
+                font-size: 0.75rem;
+            }
+            .devices-table th,
+            .devices-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">SCal Mobile RMA</div>
+            <div class="admin-badge">Admin Dashboard</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Submissions</div>
+                <div class="stat-value" id="total-submissions">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Devices</div>
+                <div class="stat-value" id="total-devices">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Our Devices</div>
+                <div class="stat-value" id="our-devices-percentage">-</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Pending Review</div>
+                <div class="stat-value" id="pending-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Approved</div>
+                <div class="stat-value" id="approved-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Denied</div>
+                <div class="stat-value" id="denied-count">-</div>
+            </div>
+        </div>
+
+        <div class="submissions-section">
+            <div class="section-header">
+                <div class="section-title">RMA Submissions</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="approved">Approved</button>
+                    <button class="filter-btn" data-filter="denied">Denied</button>
+                </div>
+            </div>
+            <div class="submissions-list" id="submissions-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading submissions...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">Submission Details</div>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

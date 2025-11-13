@@ -1,0 +1,45 @@
+SCAL MOBILE
+8583 Irvine Center Dr., #214
+Irvine, CA 92618
+
+INVOICE
+
+Invoice Number: INV-2025-00142
+Invoice Date: January 5, 2025
+Due Date: February 4, 2025
+
+Bill To:
+ABC Electronics Inc.
+123 Business Park Drive
+Los Angeles, CA 90001
+
+Order Number: ORD-20250105-ABC
+
+ITEM DESCRIPTION                  QTY    UNIT PRICE    TOTAL
+================================================================
+iPhone 13 Pro Max 256GB          50     $649.00       $32,450.00
+iPhone 12 128GB                  75     $479.00       $35,925.00
+iPhone 11 64GB                   100    $329.00       $32,900.00
+iPhone SE 2020 128GB             50     $219.00       $10,950.00
+----------------------------------------------------------------
+                                          SUBTOTAL:    $112,225.00
+                                          TAX (9.5%):   $10,661.38
+                                          TOTAL:       $122,886.38
+
+Payment Terms: Net 30 Days
+Payment Methods: Wire Transfer, ACH, Check
+
+Bank Details:
+Account Name: SCal Mobile Inc.
+Bank: Chase Bank
+Account Number: XXXX-XXXX-1234
+Routing Number: 122000661
+
+Notes:
+- All devices are certified pre-owned and tested
+- 45-day return policy from invoice date
+- RMA required for all returns
+
+For questions regarding this invoice, contact:
+Email: billing@scalmob.com
+Phone: (949) 555-0123
